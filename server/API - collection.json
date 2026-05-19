@@ -1,0 +1,1025 @@
+{
+	"info": {
+		"_postman_id": "66b171fa-d953-4980-a1a5-93eebe80a253",
+		"name": "Server API Collection",
+		"description": "API collection for the server project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3249555"
+	},
+	"item": [
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "User Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" \r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									" \r",
+									" \r",
+									"pm.response.to.have.status(200);\r",
+									" \r",
+									" \r",
+									"});\r",
+									" \r",
+									" \r",
+									"var data = JSON.parse(responseBody);\r",
+									" \r",
+									" \r",
+									"if (data.access_token) {\r",
+									" \r",
+									" \r",
+									"tests[\"Body has agpToken\"] = true;\r",
+									" \r",
+									" \r",
+									"pm.environment.set(\"token\", \"Bearer \"+data.access_token);\r",
+									" \r",
+									" \r",
+									"}\r",
+									" \r",
+									" \r",
+									"else {\r",
+									" \r",
+									" \r",
+									"tests[\"Body has agpToken\"] = false;\r",
+									" \r",
+									" \r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"example@example.com\",\"password\": \"Password123\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/user/{{userId}}/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"{{userId}}",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"email\": \"example@example.com\",\"password\": \"Password123\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/user/deleteUser?user_id={{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"deleteUser"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Follow User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"followUserId\": \"{{followedUserId}}\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/follow",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"follow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\": \"newUsername\",\"bio\": \"new bio\",\"profile_img\": \"{{filePath}}\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/{{userId}}/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"{{userId}}",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"old_password\": \"Password123\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Password",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"password\": \"Password123\",\"password_confirmed\": \"Password123\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/user/password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"user",
+								"password"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "blog",
+			"item": [
+				{
+					"name": "Create Blog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" \r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									" \r",
+									"var data = JSON.parse(responseBody);\r",
+									"if (data.id) {\r",
+									"    pm.environment.set(\"blog_id\", data.id);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"blog title\",\r\n    \"banner\": \"{{filePath}}\",\r\n    \"tags\": [\r\n        \"tag1\",\r\n        \"tag2\"\r\n    ],\r\n    \"content\": {\r\n        \"blocks\": [\r\n            {\r\n                \"id\": \"KDKV8wF9DD\",\r\n                \"type\": \"paragraph\",\r\n                \"data\": {\r\n                    \"text\": \"test\"\r\n                }\r\n            }\r\n        ],\r\n        \"time\": 1744627462161,\r\n        \"version\": \"2.29.1\"\r\n    },\r\n    \"draft\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/20250410Zm99WVSg62tdHCPAWxZ0O/view",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"20250410Zm99WVSg62tdHCPAWxZ0O",
+								"view"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Handle Blog Follow",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/20250410Zm99WVSg62tdHCPAWxZ0O/follow",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"20250410Zm99WVSg62tdHCPAWxZ0O",
+								"follow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Handle Blog Like",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/67f73037d09ed3f405c0eeed/like",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"67f73037d09ed3f405c0eeed",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Hot Blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/getHotBlogs?limit=2&page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"getHotBlogs"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followed By User Blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/blogList/followd_user?limit=2&page=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"blogList",
+								"followd_user"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followed Blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/blogList/followed?limit={{limit}}&page={{page}}&userId={{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"blogList",
+								"followed"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								},
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "userId",
+									"value": "{{userId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Blog",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/blog/67fce8475961e3f71106b346",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"blog",
+								"67fce8475961e3f71106b346"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "search",
+			"item": [
+				{
+					"name": "Search Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/search/user?keyValue=11&page=1&limit=2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"search",
+								"user"
+							],
+							"query": [
+								{
+									"key": "keyValue",
+									"value": "11"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/search/blog?keyValue={{keyword}}&page={{page}}&limit={{limit}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"search",
+								"blog"
+							],
+							"query": [
+								{
+									"key": "keyValue",
+									"value": "{{keyword}}"
+								},
+								{
+									"key": "page",
+									"value": "{{page}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{limit}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search User Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/search/user/counts?keyValue=i2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"search",
+								"user",
+								"counts"
+							],
+							"query": [
+								{
+									"key": "keyValue",
+									"value": "i2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Blog Count",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/search/blog/counts?keyValue=321",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"search",
+								"blog",
+								"counts"
+							],
+							"query": [
+								{
+									"key": "keyValue",
+									"value": "321"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "file",
+			"item": [
+				{
+					"name": "Download File",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/file/download/001.jpg",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"file",
+								"download",
+								"001.jpg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									" \r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									" \r",
+									"var data = JSON.parse(responseBody);\r",
+									"if (data.filePath) {\r",
+									"    pm.environment.set(\"filePath\", data.filePath);\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/wddlz/Desktop/20250311095519.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/file/get-upload-url",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"file",
+								"get-upload-url"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "notification",
+			"item": [
+				{
+					"name": "Create Notification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"type\": \"likeBlog\",\"user\": \"67f727594dc7c8bf170db9e0\",\"blog\": \"67f72fbdd09ed3f405c0ee7e\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/notification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"notification"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "{{token}}",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notification List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/notification/list/6NGp24VMGarOBT7jZGw_I",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"notification",
+								"list",
+								"6NGp24VMGarOBT7jZGw_I"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Notification",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"type\": \"likeBlog\",\"user\": \"67f727594dc7c8bf170db9e0\",\"blog\": \"67f72fbdd09ed3f405c0ee7e\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/notification",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notice Comment/Reply",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/notification/notice-comment/{{page}}/{{limit}}/comment",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"notification",
+								"notice-comment",
+								"{{page}}",
+								"{{limit}}",
+								"comment"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comment",
+			"item": [
+				{
+					"name": "Create Comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"blog_id\":\"67fce7065961e3f71106b330\",\"comment\":\"321312\",\"from\":\"67fcde20b358b9ba38300f34\",\"to\":null,\"root\":null}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/comment/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"comment",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Comment List by Blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/comment/commentList/20250410dac7yfwjrG5j_4Y7G4xfp/{{page}}/{{limit}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"comment",
+								"commentList",
+								"20250410dac7yfwjrG5j_4Y7G4xfp",
+								"{{page}}",
+								"{{limit}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Comment by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/comment/67f75b1e4e63124ed36b4f41",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"comment",
+								"67f75b1e4e63124ed36b4f41"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/comment/67fcfab56fb1987f0e9b3be6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"comment",
+								"67fcfab56fb1987f0e9b3be6"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,34 @@
+# The Caddyfile is an easy way to configure your Caddy web server.
+
+#
+
+# Unless the file starts with a global options block, the first
+
+# uncommented line is always the address of your site.
+
+#
+
+# To use your own domain name (with automatic HTTPS), first make
+
+# sure your domain's A/AAAA DNS records are properly pointed to
+
+# this machine's public IP, then replace ":80" below with your
+
+# domain name.
+
+n11772255.ifn666.com {
+
+        handle /api/\* {
+                reverse_proxy localhost:3001
+        }
+
+        handle {
+                reverse_proxy localhost:5173
+        }
+
+        log {
+                output file /var/www/n11772255.log
+                level debug
+        }
+
+}

@@ -1,0 +1,81 @@
+@import "@flaticon/flaticon-uicons/css/all/all";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  * {
+    @apply m-0 p-0 box-border text-base outline-none duration-100;
+  }
+
+  html {
+    @apply overflow-x-hidden;
+  }
+
+  body {
+    @apply font-inter font-normal text-black;
+  }
+
+  i {
+    @apply mt-0.5;
+  }
+
+  .f-inco {
+    @apply block w-4 h-4;
+  }
+
+  .link {
+    @apply text-dark-grey hover:text-black hover:bg-grey p-3 px-4 block opacity-75;
+  }
+
+  img {
+    @apply w-full h-full object-cover;
+  }
+
+  #textEditor h1,
+  h1 {
+    @apply font-inter text-5xl leading-normal font-bold max-md:text-5xl max-md:leading-snug !important;
+  }
+
+  #textEditor h2,
+  h2 {
+    @apply font-inter text-4xl leading-normal font-bold max-md:text-3xl max-md:leading-snug !important;
+  }
+
+  #textEditor h3,
+  h3 {
+    @apply font-inter text-3xl leading-loose max-md:text-2xl max-md:leading-normal !important;
+  }
+
+  .sidebar-link {
+    @apply flex gap-4 items-center py-5 text-dark-grey hover:text-black border-b border-dark-grey text-xl font-bold;
+  }
+
+  .sidebar-link.active {
+    @apply text-red  border-red;
+  }
+
+  .search-link{
+    @apply px-5 py-3 mr-1 border-b-[3px] border-transparent hover:text-red text-xl;
+  }
+
+  .search-link.active{
+    @apply border-red text-red;
+  }
+  em{
+    @apply text-red not-italic;
+  }
+
+  .notice-tab{
+    @apply text-xl text-dark-grey relative cursor-pointer hover:text-black;
+  }
+
+  .notice-tab::after{
+    @apply absolute content-[""] bottom-[-5px] left-[0] w-[30px] h-[2px] bg-transparent;
+  }
+
+  .notice-tab.active{
+    @apply text-black after:bg-red;
+  }
+}
