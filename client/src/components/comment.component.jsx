@@ -1,15 +1,14 @@
 import { Link, useParams } from "react-router-dom";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState, useCallback } from "react";
 import { UserAuthContext } from "../hooks/userAuthContext";
+import { CommentContext } from "./commentContext";
 import CommentField from "./commentField.component";
 import newRequest from "../servers";
-import { BlogPageContext } from "../pages/blog.page";
+import { BlogPageContext } from "../contexts/blogPageContext";
 import CommentCard from "./commentCard.component";
 import Loader from "./loader.component";
 import NoDataMessage from "./noDataMessage.component";
 import LoadMoreBtn from "./loadMoreBtn.component";
-
-export const CommentContext = createContext({});
 
 const CommentBlock = () => {
   const {
@@ -39,24 +38,20 @@ const CommentBlock = () => {
   };
 
   // 根据博客ID获取评论列表
-  const getCommentListByBlog = (page = 1, limit = 2, isNew) => {
+  const getCommentListByBlog = useCallback((page = 1, limit = 2, isNew) => {
     newRequest
       .get(`/comment/commentList/${blog_id}/${page}/${limit}`)
       .then(({ data }) => {
-        if (commentList !== null && !isNew) {
-          setCommentList({
-            ...commentList,
-            results: [...commentList.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          setCommentList({ ...data });
-        }
+        setCommentList((current) =>
+          current !== null && !isNew
+            ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+            : { ...data }
+        );
       })
       .catch((err) => {
         console.error("Error fetching comment list:", err);
       });
-  };
+  }, [blog_id]);
 
   // 组件挂载时获取评论列表，并添加点击外部隐藏输入框的监听
   useEffect(() => {
@@ -74,7 +69,7 @@ const CommentBlock = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [getCommentListByBlog]);
 
   return (
     <CommentContext.Provider value={{ commentList, setCommentList }}>

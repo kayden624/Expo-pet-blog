@@ -1,9 +1,10 @@
 import BlogContentComponent from "../components/blogContent.component";
 import BlogContentBottomComponent from "../components/blogContentbottom.component";
 import CommentBlock from "../components/comment.component";
-import { createContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import newRequest from "../servers";
 import { useParams } from "react-router-dom";
+import { BlogPageContext } from "../contexts/blogPageContext";
 
 const blogStructure = {
   title: "",
@@ -17,8 +18,6 @@ const blogStructure = {
   followed_users: [],
 };
 
-export const BlogPageContext = createContext({});
-
 const BlogPage = () => {
   let { blog_id } = useParams();
 
@@ -27,7 +26,7 @@ const BlogPage = () => {
   const [isLikedByUser, setLikeddByUser] = useState(null);
   const [isFollowedByBlog, setFollowedByBlog] = useState(null);
 
-  const getBlogContent = () => {
+  const getBlogContent = useCallback(() => {
     newRequest
       .get(`/blog/${blog_id}/view`)
       .then(({ data: { blog } }) => {
@@ -36,11 +35,11 @@ const BlogPage = () => {
       .catch((err) => {
         console.log(err);
       });
-  };
+  }, [blog_id]);
 
   useEffect(() => {
     getBlogContent();
-  }, [blog_id]);
+  }, [getBlogContent]);
 
   return (
     <>

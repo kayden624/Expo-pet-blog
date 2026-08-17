@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import Loader from "../components/loader.component";
 import newRequest from "../servers";
 import { UserAuthContext } from "../hooks/userAuthContext";
@@ -17,7 +17,7 @@ const NoticeReplyPage = () => {
   const [commentList, setCommentList] = useState(null);
 
   // 获取数据的函数
-  const fetchData = (page = 1, limit = 2, isNew) => {
+  const fetchData = useCallback((page = 1, limit = 2, isNew) => {
     if (!access_token) {
       console.error("Access token is not available yet.");
       return;
@@ -30,27 +30,21 @@ const NoticeReplyPage = () => {
         },
       })
       .then(({ data }) => {
-        if (commentList !== null && !isNew) {
-          setCommentList({
-            ...commentList,
-            results: [...commentList.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          setCommentList(data);
-        }
+        setCommentList((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  };
+  }, [access_token]);
 
   // 当访问令牌变化时，获取数据
   useEffect(() => {
     if (access_token) {
       fetchData(1, 2, true);
     }
-  }, [access_token]);
+  }, [access_token, fetchData]);
 
   return (
     <div className="mt-2">

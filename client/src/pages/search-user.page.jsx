@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import newRequest from "../servers";
 import { Link, useParams } from "react-router-dom";
 import Loader from "../components/loader.component";
@@ -19,29 +19,23 @@ const SearchUserPage = () => {
   const [filterUsers, setFilterUsers] = useState(null);
 
   // 获取搜索用户数据的函数
-  const fetchData = (page = 1, limit = 2, isNew) => {
+  const fetchData = useCallback((page = 1, limit = 2, isNew) => {
     newRequest
       .get("/search/user", { params: { keyValue: search_value, page, limit } })
       .then(({ data }) => {
-        if (filterUsers !== null && !isNew) {
-          setFilterUsers({
-            ...filterUsers,
-            results: [...filterUsers.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          setFilterUsers(data);
-        }
+        setFilterUsers((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : data);
       })
       .catch((error) => {
         console.error("Error fetching search user data:", error);
       });
-  };
+  }, [search_value]);
 
   // 当搜索值变化时，获取搜索用户数据
   useEffect(() => {
     fetchData(1, 2, true);
-  }, [search_value]);
+  }, [fetchData]);
 
   // 处理关注/取消关注用户的函数
   const handleFollow = (e, item) => {

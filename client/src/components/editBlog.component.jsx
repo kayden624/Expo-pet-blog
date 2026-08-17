@@ -3,7 +3,7 @@ import { toast, Toaster } from "react-hot-toast";
 import UserNavigationPanel from "./user-navigation.component";
 import LogoImg from "/public/logo.svg";
 import defaultBanner from "../imgs/blog_banner.png";
-import { EditorContext } from "../pages/editorBlog.page";
+import { EditorContext } from "../contexts/editorContext";
 import { UserAuthContext } from "../hooks/userAuthContext";
 import EditorJS from "@editorjs/editorjs";
 import { tools } from "../utils/tools";
@@ -187,15 +187,17 @@ const EditBlogComponent = () => {
   };
 
   useEffect(() => {
-    setTextEditor(
-      new EditorJS({
+    const editor = new EditorJS({
         holder: "editorjs",
         tools: tools,
         placeholder: "Please enter...",
         data: Array.isArray(content) ? content[0] : content,
-      })
-    );
-  }, []);
+      });
+    setTextEditor(editor);
+    return () => {
+      editor.destroy();
+    };
+  }, [content, setTextEditor]);
 
   return (
     <div className="bg-white">

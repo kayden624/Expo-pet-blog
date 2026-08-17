@@ -1,10 +1,10 @@
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import Loader from "./loader.component";
 import { UserAuthContext } from "./../hooks/userAuthContext";
 import { Toaster, toast } from "react-hot-toast";
 import newRequest from "../servers";
 import { Link } from "react-router-dom";
-import { BlogPageContext } from "../pages/blog.page";
+import { BlogPageContext } from "../contexts/blogPageContext";
 
 const BlogContentBottomComponent = () => {
   // 获取URL参数中的博客ID
@@ -168,7 +168,7 @@ const BlogContentBottomComponent = () => {
   };
 
   // 获取用户是否关注作者的状态
-  const getFollowedByUser = () => {
+  const getFollowedByUser = useCallback(() => {
     if (userId === blog.author.userId) {
       setFollowedByUser(2);
     } else {
@@ -178,25 +178,25 @@ const BlogContentBottomComponent = () => {
         setFollowedByUser(0);
       }
     }
-  };
+  }, [userId, blog.author, _id, setFollowedByUser]);
 
   // 获取用户是否点赞博客的状态
-  const getLikedByUser = () => {
+  const getLikedByUser = useCallback(() => {
     if (blog.liked_users.includes(_id)) {
       setLikeddByUser(true);
     } else {
       setLikeddByUser(false);
     }
-  };
+  }, [blog.liked_users, _id, setLikeddByUser]);
 
   // 获取用户是否收藏博客的状态
-  const getFollowedByBlog = () => {
+  const getFollowedByBlog = useCallback(() => {
     if (blog.followed_users && blog.followed_users.includes(_id)) {
       setFollowedByBlog(true);
     } else {
       setFollowedByBlog(false);
     }
-  };
+  }, [blog.followed_users, _id, setFollowedByBlog]);
 
   // 处理收藏博客操作
   const handleBlogFollow = () => {
@@ -235,7 +235,7 @@ const BlogContentBottomComponent = () => {
       getLikedByUser();
       getFollowedByBlog();
     }
-  }, [blog.author, blog.liked_users]);
+  }, [blog.author, getFollowedByBlog, getFollowedByUser, getLikedByUser]);
 
   // 如果博客信息为空，显示加载器
   return Object.keys(blog).length === 0 ? (

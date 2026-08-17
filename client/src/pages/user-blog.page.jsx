@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import BlogPostCard from "./../components/blog-post.component";
 import newRequest from "../servers";
 import NoDataMessage from "../components/noDataMessage.component";
@@ -18,29 +18,23 @@ const UserBlogsPage = () => {
   } = useContext(UserAuthContext);
 
   // 获取博客列表数据的函数
-  const getblogList = (page = 1, limit = 10, isNew) => {
+  const getblogList = useCallback((page = 1, limit = 10, isNew) => {
     newRequest
       .get("/blog/blogList", { params: { page, limit, userId: id } })
       .then(({ data }) => {
-        if (blogList !== null && !isNew) {
-          setBlogList({
-            ...blogList,
-            results: [...blogList.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          setBlogList({ ...data, pageIndex: 1 });
-        }
+        setBlogList((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : { ...data, pageIndex: 1 });
       })
       .catch((res) => {
         console.error("Error fetching blog list:", res);
       });
-  };
+  }, [id]);
 
   // 组件挂载时获取博客列表数据
   useEffect(() => {
     getblogList(1, 2, true);
-  }, []);
+  }, [getblogList]);
 
   return (
     <div>
