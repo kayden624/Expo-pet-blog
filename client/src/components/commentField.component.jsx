@@ -2,9 +2,9 @@ import { useContext, useState } from "react";
 import { UserAuthContext } from "../hooks/userAuthContext";
 import { toast, Toaster } from "react-hot-toast";
 import newRequest from "../servers";
-import { BlogPageContext } from "../pages/blog.page";
+import { BlogPageContext } from "../contexts/blogPageContext";
 import { Navigate } from "react-router-dom";
-import { CommentContext } from "./comment.component";
+import { CommentContext } from "./commentContext";
 
 const CommentField = ({ rootData = null, to = null, setShow }) => {
   // 从用户认证上下文获取用户认证信息和相关数据

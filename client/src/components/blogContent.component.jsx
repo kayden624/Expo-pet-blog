@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { getFormatedBlogPublishedTime } from "../utils/formateDate";
 import Loader from "./loader.component";
 import BlogBlockContent from "../utils/blogBlockContent";
-import { BlogPageContext } from "../pages/blog.page";
+import { BlogPageContext } from "../contexts/blogPageContext";
 
 const BlogContentComponent = () => {
   let {

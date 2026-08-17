@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import newRequest from "../servers";
 import Loader from "../components/loader.component";
 import NoDataMessage from "../components/noDataMessage.component";
@@ -13,31 +13,25 @@ const UserFavBlogsPage = () => {
   const [followedBlogs, setFollowedBlogs] = useState(null);
 
   // 获取关注的博客列表数据
-  const getFollowedBlogs = (page = 1, limit = 2, isNew) => {
+  const getFollowedBlogs = useCallback((page = 1, limit = 2, isNew) => {
     newRequest
       .get("/blog/blogList/followed", {
         params: { page, limit, userId: id },
       })
       .then(({ data }) => {
-        if (followedBlogs !== null && !isNew) {
-          setFollowedBlogs({
-            ...followedBlogs,
-            results: [...followedBlogs.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          setFollowedBlogs({ ...data });
-        }
+        setFollowedBlogs((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : { ...data });
       })
       .catch((err) => {
         console.error("Error fetching followed blogs:", err);
       });
-  };
+  }, [id]);
 
   // 组件挂载时获取关注的博客列表数据
   useEffect(() => {
     getFollowedBlogs(1, 2, true);
-  }, []);
+  }, [getFollowedBlogs]);
 
   return (
     <div>

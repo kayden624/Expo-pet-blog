@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import newRequest from "../servers";
 import { UserAuthContext } from "../hooks/userAuthContext";
 import Loader from "../components/loader.component";
@@ -17,7 +17,7 @@ const NoticeCommentPage = () => {
   const [commentList, setCommentList] = useState(null);
 
   // 定义获取数据的函数
-  const fetchData = (page = 1, limit = 2, isNew) => {
+  const fetchData = useCallback((page = 1, limit = 2, isNew) => {
     // 检查 access_token 是否存在
     if (!access_token) {
       console.error("Access token is not available yet.");
@@ -32,24 +32,16 @@ const NoticeCommentPage = () => {
         },
       })
       .then(({ data }) => {
-        if (commentList !== null && !isNew) {
-          // 合并新旧数据
-          setCommentList({
-            ...commentList,
-            results: [...commentList.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          // 直接设置新数据
-          setCommentList(data);
-        }
+        setCommentList((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : data);
       })
       .catch((error) => {
         // 捕获请求错误并打印日志
         console.error("Error fetching data:", error);
         // 可以在这里添加更友好的用户提示，比如使用 toast 库
       });
-  };
+  }, [access_token]);
 
   // 使用 useEffect 监听 access_token 的变化
   useEffect(() => {
@@ -57,7 +49,7 @@ const NoticeCommentPage = () => {
       // 当 access_token 有值时，发起首次请求
       fetchData(1, 2, true);
     }
-  }, [access_token]);
+  }, [access_token, fetchData]);
 
   return (
     <div className="mt-2">

@@ -72,7 +72,7 @@ export default function BlogList() {
         onSearch={(v) => v && setKw(v)}
       />
       <View className="flex-1">
-        <ScrollView
+        <ScrollView<Blog.ListResult>
           loadDataFn={loadDataFn}
           enableRefresh
           showLoading

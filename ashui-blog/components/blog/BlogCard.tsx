@@ -19,7 +19,7 @@ import { Show } from "../base/Show";
 interface BlogCardProps extends Partial<Blog.BlogItem> {
   hideInfo?: boolean;
   summer?: string;
-  authorInfo?: User.Personal_info;
+  authorInfo?: Blog.Author;
   onDeleted?: () => void;
 }
 
@@ -87,12 +87,12 @@ export default function BlogCard({
           {/* Author information: avatar, username */}
           <Show when={!!authorInfo || !!author}>
             <View className="flex-row items-center mb-2">
-              {(authorInfo?.profile_img ||
+              {(authorInfo?.personal_info.profile_img ||
                 author?.personal_info.profile_img) && (
                 <Image
                   source={{
                     uri:
-                      authorInfo?.profile_img ||
+                      authorInfo?.personal_info.profile_img ||
                       author?.personal_info.profile_img,
                   }}
                   style={{ width: 24, height: 24 }}
@@ -100,7 +100,7 @@ export default function BlogCard({
                 />
               )}
               <Text className="text-sm text-gray-600">
-                {authorInfo?.username || author?.personal_info.username}
+                {authorInfo?.personal_info.username || author?.personal_info.username}
               </Text>
             </View>
           </Show>

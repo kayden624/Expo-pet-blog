@@ -20,7 +20,7 @@ router.post("/password", verifyJWT, userCon.verifiedPassword);
 // 更新密码
 router.put("/password", verifyJWT, userCon.updatePassword);
 // 删除用户
-router.delete("/", userCon.deleteUser);
+router.delete("/", verifyJWT, userCon.deleteUser);
 // 关注用户
 router.post("/follow", verifyJWT, userCon.followedUser);
 //关注了那些人

@@ -24,7 +24,7 @@ const UserNotificationPage = () => {
       .catch((error) => {
         console.error("Error fetching notifications:", error);
       });
-  }, []);
+  }, [id]);
 
   return (
     <>

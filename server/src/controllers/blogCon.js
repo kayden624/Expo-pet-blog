@@ -56,7 +56,7 @@ export const createBlog = (req, res) => {
 
   if (id) {
     Blog.findOneAndUpdate(
-      { blog_id: id },
+      { blog_id: id, author: authorId },
       {
         title,
         banner,
@@ -65,6 +65,7 @@ export const createBlog = (req, res) => {
       }
     )
       .then((data) => {
+        if (!data) return res.status(404).json({ error: "Blog not found or access denied" });
         return res.status(200).json({ data });
       })
       .catch((err) => {
@@ -158,8 +159,11 @@ export const getBlogList = (req, res) => {
       $project: {
         author: {
           userId: "$userId",
-          username: "$personal_info.username",
-          profile_img: "$personal_info.profile_img",
+          personal_info: {
+            username: "$personal_info.username",
+            profile_img: "$personal_info.profile_img",
+            bio: "$personal_info.bio",
+          },
         },
         blog: "$user_blogs",
       },
@@ -427,12 +431,11 @@ export const deleteBlog = async (req, res) => {
     const blog_id = req.params.blog_id;
     // _id 作为authorId 存储
     let user_id = req.user;
-    // delete all notifications
+    const deleted = await Blog.deleteOne({ _id: blog_id, author: user_id });
+    if (!deleted.deletedCount) return res.status(404).json({ error: "Blog not found or access denied" });
+    // delete related records only after ownership is verified
     await Notification.deleteMany({ blog: blog_id });
-    // delete comment
     await Comment.deleteMany({ blog_id: blog_id });
-    // delete blog
-    await Blog.deleteMany({ _id: blog_id });
     //update user
     await User.findOneAndUpdate(
       { _id: user_id },

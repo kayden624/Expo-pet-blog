@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import HomePage from "./pages/home.page";
 import Navbar from "./components/navbar.component";
-import { UserAuthProvider } from "./hooks/userAuthContext";
+import { UserAuthProvider } from "./hooks/UserAuthProvider";
 import UserInfo from "./pages/userInfo.page";
 import Sidebar from "./components/sidebar.component";
 import EditProfile from "./pages/edit-profile.page";

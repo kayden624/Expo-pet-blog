@@ -15,7 +15,7 @@ export const createNotification = async (req, res) => {
 
     // 收藏有专门的列表查询，不放在动态通知中
 
-    if (!requestObj.type || !requestObj.user) {
+    if (!requestObj.type) {
       return res.status(403).json({ msg: "fail", err: "error request value" });
     }
 
@@ -27,7 +27,7 @@ export const createNotification = async (req, res) => {
       return res.status(403).json({ msg: "fail", err: "miss blog" });
     }
 
-    let newNotification = new Notification(requestObj);
+    let newNotification = new Notification({ ...requestObj, user: req.user });
 
     await newNotification.save();
 
@@ -41,7 +41,7 @@ export const createNotification = async (req, res) => {
 export const getNotificationList = async (req, res) => {
   try {
     const userId = req.params.user_id;
-    let { limit, page } = req.body;
+    let { limit, page } = req.query;
 
     let maxLimit = limit ? limit : 10;
     let defaultPage = page ? page : 1;
@@ -50,6 +50,9 @@ export const getNotificationList = async (req, res) => {
 
     if (!userData) {
       return res.status(403).json({ msg: "fail", err: "error user value" });
+    }
+    if (String(userData._id) !== String(req.user)) {
+      return res.status(403).json({ msg: "forbidden" });
     }
     const results = await Notification.find({ user: userData._id })
       .populate("blog", "title banner blog_id")
@@ -125,7 +128,7 @@ export const deleteNotification = async (req, res) => {
 
     const defaultTypeArr = ["likeBlog", "followUser", "comment", "reply"];
 
-    if (!requestObj.type || !requestObj.user) {
+    if (!requestObj.type) {
       return res.status(403).json({ msg: "fail", err: "error request value" });
     }
 
@@ -133,15 +136,16 @@ export const deleteNotification = async (req, res) => {
       return res.status(403).json({ msg: "fail", err: "error type value" });
     }
 
+    const ownership = { ...requestObj, user: req.user };
     if (requestObj.type === "comment") {
       await Notification.deleteMany({
         type: "reply",
-        user: requestObj.user,
+        user: req.user,
         blog: requestObj.blog,
         replied_on_comment: requestObj.comment,
       });
     }
-    await Notification.deleteMany(requestObj);
+    await Notification.deleteMany(ownership);
 
     res.status(200).json({ msg: "successful" });
   } catch (error) {

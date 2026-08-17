@@ -7,7 +7,7 @@ export const actionList =
       .get("notification/list/" + userId, {
         searchParams: { page, limit },
       })
-      .json();
+      .json<User.ListResponse>();
 
 export const followingList =
   (userId: string) =>
@@ -16,7 +16,7 @@ export const followingList =
       .get("user/getFollowingUsers", {
         searchParams: { page, limit, userId },
       })
-      .json();
+      .json<User.ListResponse>();
 export const followedList =
   (userId: string) =>
   (page = 1, limit = 10) =>
@@ -24,7 +24,7 @@ export const followedList =
       .get("user/getFollowedUsers", {
         searchParams: { page, limit, userId },
       })
-      .json();
+      .json<User.ListResponse>();
 
 export const doFollow = (followUserId: string) =>
   api.post("user/follow", { json: { followUserId } }).json();
@@ -40,12 +40,15 @@ export const changePassword = (password: string) =>
     .put(`user/password`, { json: { password, password_confirmed: password } })
     .json();
 
+export const verifyPassword = (old_password: string) =>
+  api.post(`user/password`, { json: { old_password } }).json();
+
 //搜索
 export const searchUser =
   (keyword: string) =>
   (page = 1, limit = 10) =>
     api
-      .get<Blog.BlogList>(
+      .get<User.ListResponse>(
         `search/user?keyValue=${keyword}&page=${page}&limit=${limit}`
       )
       .json();

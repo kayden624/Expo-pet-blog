@@ -1,10 +1,9 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserAuthContext } from "../hooks/userAuthContext";
 import { Navigate, useParams } from "react-router-dom";
 import EditBlogComponent from "../components/editBlog.component";
 import newRequest from "../servers";
 import Loader from "../components/loader.component";
-
 const blogStructure = {
   title: "",
   banner: "",
@@ -14,7 +13,7 @@ const blogStructure = {
   author: { personal_info: {} },
 };
 
-export const EditorContext = createContext({});
+import { EditorContext } from "../contexts/editorContext";
 
 const Editor = () => {
   let {
@@ -43,7 +42,7 @@ const Editor = () => {
         setBlog(null);
         setLoading(false);
       });
-  }, []);
+  }, [blog_id]);
 
   return (
     <EditorContext.Provider

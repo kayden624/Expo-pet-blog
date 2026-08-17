@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import newRequest from "../servers";
 import { UserAuthContext } from "../hooks/userAuthContext";
 import InPageNavigation from "./inpage-navigation.component";
@@ -28,27 +28,21 @@ const HomeBlogList = () => {
   const [pageState, setPageState] = useState("home");
 
   // 获取热门博客列表
-  const getHotBlogs = (page = 1, limit = 2, isNew) => {
+  const getHotBlogs = useCallback((page = 1, limit = 2, isNew) => {
     newRequest
       .get("/blog/getHotBlogs", { params: { page, limit } })
       .then(({ data }) => {
-        if (hotBlogs !== null && !isNew) {
-          sethotBlogs({
-            ...hotBlogs,
-            results: [...hotBlogs.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          sethotBlogs({ ...data });
-        }
+        sethotBlogs((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : { ...data });
       })
       .catch((error) => {
         console.error("Error fetching hot blogs:", error);
       });
-  };
+  }, []);
 
   // 获取关注的博客列表
-  const getFollowedBlogs = (page = 1, limit = 2, isNew) => {
+  const getFollowedBlogs = useCallback((page = 1, limit = 2, isNew) => {
     if (!access_token) {
       return;
     }
@@ -60,20 +54,14 @@ const HomeBlogList = () => {
         },
       })
       .then(({ data }) => {
-        if (followedBlogs !== null && !isNew) {
-          setFollowedBlogs({
-            ...followedBlogs,
-            results: [...followedBlogs.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          setFollowedBlogs({ ...data });
-        }
+        setFollowedBlogs((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : { ...data });
       })
       .catch((error) => {
         console.error("Error fetching followed blogs:", error);
       });
-  };
+  }, [access_token]);
 
   // 页面状态改变时重新获取数据
   useEffect(() => {
@@ -87,7 +75,7 @@ const HomeBlogList = () => {
     if (pageState === "follow") {
       getFollowedBlogs(1, 2, true);
     }
-  }, [pageState]);
+  }, [pageState, getFollowedBlogs, getHotBlogs]);
 
   return (
     <InPageNavigation

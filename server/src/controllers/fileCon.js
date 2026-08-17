@@ -8,6 +8,7 @@ import "dotenv/config"; // 引入 dotenv 来加载环境变量
 const storage = multer.diskStorage({
   // 1- 上传文件的目录
   destination: function (req, file, cb) {
+    fs.mkdirSync("assets/uploads", { recursive: true });
     cb(null, "assets/uploads");
   },
   // 2- 上传文件的名称 - 修改为时间戳格式
@@ -28,15 +29,14 @@ const storage = multer.diskStorage({
 // multer 配置
 export const ImgUpload = multer({
   storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    cb(null, /^image\/(jpeg|png|webp)$/.test(file.mimetype));
+  },
 });
 
 // 上传文件
 export const uploadFile = (req, res) => {
-  // 如果路径不存在，则创建
-  if (!fs.existsSync("assets/uploads")) {
-    fs.mkdirSync("assets/uploads");
-  }
-
   if (!req.file) {
     return res.status(400).send("No file uploaded.");
   }

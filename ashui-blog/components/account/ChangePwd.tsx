@@ -1,5 +1,5 @@
 import { doLogout } from "@/api/auth";
-import { changePassword } from "@/api/user";
+import { changePassword, verifyPassword } from "@/api/user";
 import { useLoading } from "@/contexts/LoadingContext";
 import useUtil from "@/hooks/useUtil";
 import { useMemoizedFn } from "ahooks";
@@ -13,17 +13,17 @@ export default function ChangePwd() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const { userInfo } = useUtil();
   const { showLoading, hideLoading } = useLoading();
 
-  const handleVerifyPassword = useMemoizedFn(() => {
+  const handleVerifyPassword = useMemoizedFn(async () => {
     if (!currentPassword) {
       setError("Please enter your current password");
       return;
     }
 
-    console.log("userInfo", userInfo);
-    if (currentPassword !== userInfo?.password) {
+    try {
+      await verifyPassword(currentPassword);
+    } catch {
       setError("The current password is incorrect");
       return;
     }

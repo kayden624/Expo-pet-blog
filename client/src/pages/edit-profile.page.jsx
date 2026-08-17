@@ -50,7 +50,7 @@ const EditProfile = () => {
           setLoading(false);
         });
     }
-  }, [access_token]);
+  }, [access_token, userAuth.userId]);
 
   const handleImagePreviewAndUpload = (e) => {
     let img = e.target.files[0];

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import newRequest from "../servers";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import NoDataMessage from "../components/noDataMessage.component";
 import SearchBlogCard from "../components/searchBlogCard.component";
 import Loader from "../components/loader.component";
@@ -14,29 +14,23 @@ const SearchBlogPage = () => {
   const [filterBlogs, setFilterBlogs] = useState(null);
 
   // 获取搜索博客数据的函数
-  const fetchSearchBlogData = (page = 1, limit = 2, isNew) => {
+  const fetchSearchBlogData = useCallback((page = 1, limit = 2, isNew) => {
     newRequest
       .get("/search/blog", { params: { keyValue: search_value, page, limit } })
       .then(({ data }) => {
-        if (filterBlogs !== null && !isNew) {
-          setFilterBlogs({
-            ...filterBlogs,
-            results: [...filterBlogs.results, ...data.results],
-            pageIndex: data.pageIndex,
-          });
-        } else {
-          setFilterBlogs(data);
-        }
+        setFilterBlogs((current) => current !== null && !isNew
+          ? { ...current, results: [...current.results, ...data.results], pageIndex: data.pageIndex }
+          : data);
       })
       .catch((error) => {
         console.error("Error fetching search blog data:", error);
       });
-  };
+  }, [search_value]);
 
   // 当搜索值变化时，获取搜索博客数据
   useEffect(() => {
     fetchSearchBlogData(1, 2, true);
-  }, [search_value]);
+  }, [fetchSearchBlogData]);
 
   return (
     <>

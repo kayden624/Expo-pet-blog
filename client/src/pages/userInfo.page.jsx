@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet, useParams } from "react-router-dom";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import newRequest from "../servers";
 import { getGrowDay } from "../utils/formateDate";
 import Loader from "../components/loader.component";
@@ -32,7 +32,7 @@ const UserInfo = () => {
   };
 
   // 获取用户资料的函数
-  const getProfile = () => {
+  const getProfile = useCallback(() => {
     newRequest
       .get(`/user/${id}/profile`)
       .then(({ data: { user } }) => {
@@ -42,7 +42,7 @@ const UserInfo = () => {
       .catch((error) => {
         console.error("Error fetching user profile:", error);
       });
-  };
+  }, [id]);
 
   // 组件挂载时的副作用函数
   useEffect(() => {
@@ -56,7 +56,7 @@ const UserInfo = () => {
       changePageState(activeTabRef.current);
     }
     getProfile();
-  }, []);
+  }, [getProfile]);
 
   return (
     <div className="py-20">

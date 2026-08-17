@@ -1,17 +1,7 @@
-import { useContext, useState } from "react";
-import { UserAuthContext } from "../hooks/userAuthContext";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import InputBoxUser from "./../components/inputUser.component";
 
 const EditEmail = () => {
-  let {
-    userAuth,
-    userAuth: { access_token },
-    setUserAuth,
-  } = useContext(UserAuthContext);
-
-  const [isSendCode, setSendCode] = useState(true);
-
   return (
     <div className="bg-white flex-[8_1_0%] shadow-md">
       <Toaster />

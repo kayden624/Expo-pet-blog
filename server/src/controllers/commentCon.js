@@ -3,7 +3,8 @@ import Comment from "../models/Comment.js";
 
 export const createComment = async (req, res) => {
   try {
-    let { blog_id, comment, from, to, root } = req.body;
+    let { blog_id, comment, to, root } = req.body;
+    const from = req.user;
 
     let newComment = new Comment({
       blog_id,
@@ -172,7 +173,8 @@ export const deleteChildrenComment = async (comment_id, commentData) => {
 export const deleteComment = async (req, res) => {
   try {
     const comment_id = req.params.comment_id;
-    const commentData = await Comment.findOne({ _id: comment_id });
+    const commentData = await Comment.findOne({ _id: comment_id, from: req.user });
+    if (!commentData) return res.status(404).json({ error: "Comment not found or access denied" });
     let delCounts = 0;
 
     if (commentData.root === null) {

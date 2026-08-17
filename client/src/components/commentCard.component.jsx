@@ -4,8 +4,8 @@ import CommentField from "./commentField.component";
 import { UserAuthContext } from "../hooks/userAuthContext";
 import newRequest from "../servers";
 import toast from "react-hot-toast";
-import { BlogPageContext } from "../pages/blog.page";
-import { CommentContext } from "./comment.component";
+import { BlogPageContext } from "../contexts/blogPageContext";
+import { CommentContext } from "./commentContext";
 
 const CommentCard = ({ commentData }) => {
   // commentData is rootData

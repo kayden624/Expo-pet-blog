@@ -13,13 +13,25 @@ import notificationRouter from "./src/routes/notificationRoute.js";
 import mime from 'mime-types';
 
 const server = express();
+const requiredEnvironment = ["MONGODB_URI", "JWT_SECRET", "BASE_URL", "CORS_ORIGIN"];
+const missingEnvironment = requiredEnvironment.filter((name) => !process.env[name]);
+if (missingEnvironment.length) {
+  throw new Error(`Missing required environment variables: ${missingEnvironment.join(", ")}`);
+}
+if (process.env.NODE_ENV === "production" && !process.env.BASE_URL.startsWith("https://")) {
+  throw new Error("BASE_URL must use HTTPS in production");
+}
 
 // --  middleware
 
 // req.body
 server.use(express.json());
 
-server.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+server.use(cors({ origin: allowedOrigins.length ? allowedOrigins : false }));
 
 // Serving static files
 // 静态文件 Content-Type 配置
@@ -43,12 +55,9 @@ server.use(
 //   autoIndex: true,
 // });
 
-const DB = process.env.DATABASE_REMOTE.replace(
-  "<password>",
-  process.env.DATEBASE_PASSWORD
-);
-mongoose.connect(DB, {}).then((con) => {
-  console.log("DB connect successful!");
+server.get("/health", (_req, res) => {
+  const isDatabaseConnected = mongoose.connection.readyState === 1;
+  res.status(isDatabaseConnected ? 200 : 503).json({ status: isDatabaseConnected ? "ok" : "unavailable" });
 });
 
 server.use("/api/user", userRouter);
@@ -58,6 +67,19 @@ server.use("/api/comment", commentRouter);
 server.use("/api/search", searchRouter);
 server.use("/api/notification", notificationRouter);
 
-server.listen("3001", () => {
-  console.log("success");
-});
+const port = Number(process.env.PORT || 3001);
+
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
+    console.log("DB connect successful!");
+    server.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("Unable to connect to MongoDB:", error.message);
+    process.exitCode = 1;
+  }
+};
+
+startServer();

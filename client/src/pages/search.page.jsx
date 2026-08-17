@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import newRequest from "../servers";
 
@@ -31,7 +31,7 @@ const SearchPage = () => {
   };
 
   // 获取过滤后的用户数量
-  const getFilterUserCount = () => {
+  const getFilterUserCount = useCallback(() => {
     newRequest
       .get("/search/user/counts", { params: { keyValue: search_value } })
       .then(({ data: { totalDocs } }) => {
@@ -40,10 +40,10 @@ const SearchPage = () => {
       .catch((error) => {
         console.error("Error fetching user count:", error);
       });
-  };
+  }, [search_value]);
 
   // 获取过滤后的文章数量
-  const getFilterBlogCount = () => {
+  const getFilterBlogCount = useCallback(() => {
     newRequest
       .get("/search/blog/counts", { params: { keyValue: search_value } })
       .then(({ data: { totalDocs } }) => {
@@ -52,13 +52,13 @@ const SearchPage = () => {
       .catch((error) => {
         console.error("Error fetching blog count:", error);
       });
-  };
+  }, [search_value]);
 
   // 当搜索值变化时，重新获取用户和文章的计数
   useEffect(() => {
     getFilterUserCount();
     getFilterBlogCount();
-  }, [search_value]);
+  }, [getFilterBlogCount, getFilterUserCount]);
 
   return (
     <div className="py-20 w-full">

@@ -25,8 +25,12 @@ const InPageNavigation = ({
   };
 
   useEffect(() => {
-    changePageState(activeTabRef.current, defaultActiveIndex);
-  }, []);
+    const button = activeTabRef.current;
+    if (button && activeTabLineRef.current) {
+      activeTabLineRef.current.style.width = `${button.offsetWidth}px`;
+      activeTabLineRef.current.style.left = `${button.offsetLeft}px`;
+    }
+  }, [defaultActiveIndex]);
 
   return (
     <>

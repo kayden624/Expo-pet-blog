@@ -2,7 +2,6 @@ import { ServerUrl, USER_KEY } from "@/constants";
 import { getItem } from "@/util/storage";
 import { router } from "expo-router";
 import ky from "ky";
-import { doLogin } from "./auth";
 let token = "";
 if (!("throwIfAborted" in AbortSignal.prototype)) {
   //@ts-ignore
@@ -14,10 +13,6 @@ if (!("throwIfAborted" in AbortSignal.prototype)) {
     }
   };
 }
-console.log(
-  "throwIfAborted supported?",
-  "throwIfAborted" in AbortSignal.prototype
-);
 
 const apiClient = ky.create({
   prefixUrl: ServerUrl + "/api",
@@ -30,18 +25,11 @@ const apiClient = ky.create({
   hooks: {
     beforeRequest: [
       async (request) => {
-        console.log(
-          "Request is about to be sent:",
-          request.url,
-          "token=",
-          token
-        );
         /*   if (token) {
           console.log("🚀 ~ file: client.ts:28 ~ token:", token);
           return;
         } */
         const data = await getItem(USER_KEY);
-        console.log("🚀 ~ file: client.ts:35 ~ data:", data);
         if (data) {
           const { access_token } = data as User.LoginUser;
           token = access_token;
@@ -55,26 +43,8 @@ const apiClient = ky.create({
         console.log("Response received:", response.status);
         return response;
       },
-      // Or retry with a fresh token on a 403 error
-      async (input, options, response) => {
-        if (response.status === 401) {
-          const loginUser = (await getItem("user")) as User.LoginUser;
-          console.log("🚀 ~ file: client.ts:47 ~ loginUser:", loginUser);
-          if (!loginUser) {
-            router.push("/Login");
-            return;
-          }
-          const { email, password } = loginUser;
-          const data = await doLogin(email, password);
-          if (data?.access_token) {
-            token = data.access_token;
-            console.log("🚀 ~ file: client.ts:54 ~ token:", token);
-
-            //@ts-ignore
-            options.headers.set("Authorization", "Bearer " + token);
-            return ky(input, options);
-          }
-        }
+      async (_input, _options, response) => {
+        if (response.status === 401 || response.status === 403) router.replace("/Login");
       },
     ],
     /*  beforeRetry: [
