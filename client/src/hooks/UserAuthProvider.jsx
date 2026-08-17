@@ -3,11 +3,26 @@ import { lookInSession } from "../servers/sessions";
 import { UserAuthContext } from "./userAuthContext";
 
 export function UserAuthProvider({ children }) {
-  const [userAuth, setUserAuth] = useState({});
+  const [userAuth, setUserAuth] = useState({ access_token: null });
 
   useEffect(() => {
     const userInSession = lookInSession("user");
-    setUserAuth(userInSession ? JSON.parse(userInSession) : { access_token: null });
+    if (!userInSession) {
+      setUserAuth({ access_token: null });
+      return;
+    }
+
+    try {
+      const parsedUser = JSON.parse(userInSession);
+      setUserAuth(
+        parsedUser && typeof parsedUser === "object"
+          ? parsedUser
+          : { access_token: null }
+      );
+    } catch {
+      sessionStorage.removeItem("user");
+      setUserAuth({ access_token: null });
+    }
   }, []);
 
   return (

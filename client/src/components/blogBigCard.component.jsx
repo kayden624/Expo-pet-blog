@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { getMonthDay } from "../utils/formateDate";
+import defaultImg from "../imgs/defaultImg.jpg";
 
 const BlogBigCard = ({ blog, author }) => {
+  const authorProfile = author?.personal_info ?? {};
+
   return (
     <>
       <Link className="flex my-4" to={`/blog/${blog.blog_id}`}>
@@ -13,10 +16,11 @@ const BlogBigCard = ({ blog, author }) => {
           <div className="flex justify-between ">
             <div className="flex gap-2">
               <img
-                src={author.personal_info.profile_img}
+                src={authorProfile.profile_img || defaultImg}
+                alt="author profile"
                 className="w-[24px] h-[24px] rounded-full object-cover"
               />
-              <span>{author.personal_info.username}</span>
+              <span>{authorProfile.username || "Unknown author"}</span>
               <span>{getMonthDay(blog.publishedAt)}</span>
             </div>
 
