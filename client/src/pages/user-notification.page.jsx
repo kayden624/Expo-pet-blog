@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import newRequest from "../servers";
 import Loader from "../components/loader.component";
@@ -6,25 +6,38 @@ import NoDataMessage from "../components/noDataMessage.component";
 import BlogPostCard from "../components/blog-post.component";
 import NotificationFollowUser from "../components/notification-followUser.component";
 import NotificationComment from "../components/notification-comment.component";
+import { UserAuthContext } from "../hooks/userAuthContext";
 
 const UserNotificationPage = () => {
   // 从路由参数中获取用户 ID
   const { id } = useParams();
   // 初始化通知列表状态
   const [notifications, setNotifications] = useState(null);
+  const {
+    userAuth: { access_token },
+  } = useContext(UserAuthContext);
 
   // 组件挂载时获取通知列表数据
   useEffect(() => {
+    if (!access_token) {
+      return;
+    }
+
     newRequest
-      .get(`/notification/list/${id}`)
+      .get(`/notification/list/${id}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
       .then(({ data }) => {
         // console.log(data);
         setNotifications(data);
       })
       .catch((error) => {
         console.error("Error fetching notifications:", error);
+        setNotifications({ results: [], totalDocs: 0, pageIndex: 1 });
       });
-  }, [id]);
+  }, [id, access_token]);
 
   return (
     <>

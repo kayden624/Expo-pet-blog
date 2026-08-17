@@ -40,6 +40,7 @@ const NoticeCommentPage = () => {
         // 捕获请求错误并打印日志
         console.error("Error fetching data:", error);
         // 可以在这里添加更友好的用户提示，比如使用 toast 库
+        setCommentList({ results: [], totalDocs: 0, pageIndex: page });
       });
   }, [access_token]);
 

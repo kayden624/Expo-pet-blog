@@ -29,6 +29,7 @@ const UserBlogsPage = () => {
       })
       .catch((res) => {
         console.error("Error fetching blog list:", res);
+        setBlogList({ results: [], totalDocs: 0, pageIndex: page });
       });
   }, [id]);
 

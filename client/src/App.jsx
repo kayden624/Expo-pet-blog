@@ -20,6 +20,7 @@ import UserNotificationPage from "./pages/user-notification.page";
 import NotificationPage from "./pages/notification.page";
 import NoticeCommentPage from "./pages/notice-comment";
 import NoticeReplyPage from "./pages/notice-reply.page";
+import NoDataMessage from "./components/noDataMessage.component";
 
 // 1) set outlet
 function RootLayout() {
@@ -84,7 +85,7 @@ const router = createBrowserRouter([
         children: [
           { path: "comment", element: <NoticeCommentPage /> },
           { path: "reply", element: <NoticeReplyPage /> },
-          { path: "system", element: <h2>system</h2> },
+          { path: "system", element: <NoDataMessage message="No notifications yet" /> },
         ],
       },
       { path: "*", element: <ErrorPage /> },

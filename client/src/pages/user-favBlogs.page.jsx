@@ -25,6 +25,7 @@ const UserFavBlogsPage = () => {
       })
       .catch((err) => {
         console.error("Error fetching followed blogs:", err);
+        setFollowedBlogs({ results: [], totalDocs: 0, pageIndex: page });
       });
   }, [id]);
 

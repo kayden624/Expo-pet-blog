@@ -41,6 +41,7 @@ const UserInfo = () => {
       })
       .catch((error) => {
         console.error("Error fetching user profile:", error);
+        setLoading(false);
       });
   }, [id]);
 

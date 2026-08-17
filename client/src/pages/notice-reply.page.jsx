@@ -36,6 +36,7 @@ const NoticeReplyPage = () => {
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
+        setCommentList({ results: [], totalDocs: 0, pageIndex: page });
       });
   }, [access_token]);
 
