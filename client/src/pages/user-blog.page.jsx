@@ -6,6 +6,7 @@ import Loader from "../components/loader.component";
 import LoadMoreBtn from "../components/loadMoreBtn.component";
 import { useParams } from "react-router-dom";
 import { UserAuthContext } from "../hooks/userAuthContext";
+import { getAuthorView } from "../utils/author";
 
 const UserBlogsPage = () => {
   // 从路由参数中获取用户ID
@@ -44,11 +45,12 @@ const UserBlogsPage = () => {
         blogList.results.map((b, i) => {
           const blogCon = b.blog;
           const authorCon = b.author;
+          const author = getAuthorView(authorCon);
           return (
             <BlogPostCard
               key={i}
               type="Create"
-              profile_img={authorCon.profile_img}
+              profile_img={author.profileImage}
               banner={blogCon.banner}
               title={blogCon.title}
               publish_time={blogCon.publishedAt}

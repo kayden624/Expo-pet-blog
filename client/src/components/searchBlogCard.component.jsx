@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { getFullDay } from "./../utils/formateDate";
+import { getAuthorView } from "../utils/author";
 
 const SearchBlogCardTitle = ({ title }) => {
   return (
@@ -21,6 +22,7 @@ const SearchBlogCardSummer = ({ title }) => {
 };
 
 const SearchBlogCard = ({ title, summer, blog }) => {
+  const author = getAuthorView(blog.author);
   return (
     <Link
       to={`/blog/${blog.blog_id}`}
@@ -41,11 +43,11 @@ const SearchBlogCard = ({ title, summer, blog }) => {
         <div className="flex gap-7">
           <div className="flex gap-2">
             <img
-              src={blog.author.personal_info.profile_img}
+              src={author.profileImage}
               alt="user"
               className="w-[20px] h-[20px] rounded-full"
             />
-            <span>{blog.author.personal_info.username}</span>
+            <span>{author.username}</span>
           </div>
           <p>{getFullDay(blog.publishedAt)}</p>
           <span>

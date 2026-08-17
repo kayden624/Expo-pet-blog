@@ -3,12 +3,14 @@ import { getFormatedBlogPublishedTime } from "../utils/formateDate";
 import Loader from "./loader.component";
 import BlogBlockContent from "../utils/blogBlockContent";
 import { BlogPageContext } from "../contexts/blogPageContext";
+import { getAuthorView } from "../utils/author";
 
 const BlogContentComponent = () => {
   let {
     blog,
     blog: { content },
   } = useContext(BlogPageContext);
+  const author = getAuthorView(blog.author);
 
   return Object.keys(blog).length === 0 || content.length === 0 ? (
     <Loader />
@@ -25,11 +27,11 @@ const BlogContentComponent = () => {
           <div className="flex justify-between my-5">
             <div className="flex gap-2 items-center">
               <img
-                src={blog.author.personal_info.profile_img}
+                src={author.profileImage}
                 alt="profile_img"
                 className="w-[36px] h-[36px] rounded-full"
               />
-              <p>{blog.author.personal_info.username}</p>
+              <p>{author.username}</p>
             </div>
 
             <p>{getFormatedBlogPublishedTime(blog.publishedAt)}</p>

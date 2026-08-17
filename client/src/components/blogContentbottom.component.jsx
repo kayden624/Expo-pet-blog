@@ -1,10 +1,11 @@
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import Loader from "./loader.component";
 import { UserAuthContext } from "./../hooks/userAuthContext";
 import { Toaster, toast } from "react-hot-toast";
 import newRequest from "../servers";
 import { Link } from "react-router-dom";
 import { BlogPageContext } from "../contexts/blogPageContext";
+import { getAuthorView } from "../utils/author";
 
 const BlogContentBottomComponent = () => {
   // 获取URL参数中的博客ID
@@ -26,6 +27,7 @@ const BlogContentBottomComponent = () => {
     isFollowedByBlog,
     setFollowedByBlog,
   } = useContext(BlogPageContext);
+  const author = useMemo(() => getAuthorView(blog.author), [blog.author]);
 
   // 处理点赞操作
   const handleLike = (flag) => {
@@ -98,7 +100,7 @@ const BlogContentBottomComponent = () => {
 
   // 处理关注用户操作
   const handleFollow = (flag) => {
-    if (access_token) {
+    if (access_token && author.hasAuthor) {
       // 切换关注状态
       flag = flag === 1 ? 0 : 1;
       setFollowedByUser(flag);
@@ -106,7 +108,7 @@ const BlogContentBottomComponent = () => {
       newRequest
         .post(
           "/user/follow",
-          { followUserId: blog.author.userId },
+          { followUserId: author.userId },
           {
             headers: {
               Authorization: `Bearer ${access_token}`,
@@ -124,7 +126,7 @@ const BlogContentBottomComponent = () => {
                 {
                   type: "followUser",
                   user: _id,
-                  followedUser: blog.author._id,
+                  followedUser: author.authorId,
                 },
                 {
                   headers: {
@@ -144,7 +146,7 @@ const BlogContentBottomComponent = () => {
                 data: {
                   type: "followUser",
                   user: _id,
-                  followedUser: blog.author._id,
+                  followedUser: author.authorId,
                 },
                 headers: {
                   Authorization: `Bearer ${access_token}`,
@@ -169,16 +171,18 @@ const BlogContentBottomComponent = () => {
 
   // 获取用户是否关注作者的状态
   const getFollowedByUser = useCallback(() => {
-    if (userId === blog.author.userId) {
+    if (!author.hasAuthor) {
+      setFollowedByUser(null);
+    } else if (userId === author.userId) {
       setFollowedByUser(2);
     } else {
-      if (blog.author.verified_followers.includes(_id)) {
+      if (author.verifiedFollowers.includes(_id)) {
         setFollowedByUser(1);
       } else {
         setFollowedByUser(0);
       }
     }
-  }, [userId, blog.author, _id, setFollowedByUser]);
+  }, [userId, author, _id, setFollowedByUser]);
 
   // 获取用户是否点赞博客的状态
   const getLikedByUser = useCallback(() => {
@@ -288,23 +292,23 @@ const BlogContentBottomComponent = () => {
         <span className=" border-b-2 border-grey w-[100%] block my-4"></span>
         {/* 用户信息 */}
         <div className="flex justify-center gap-3">
-          <Link to={`/user/${blog.author.userId}`} className="flex gap-4 mb-3">
+          {author.hasAuthor ? <Link to={`/user/${author.userId}`} className="flex gap-4 mb-3">
             <img
-              src={blog.author.personal_info.profile_img}
+              src={author.profileImage}
               className="w-[42px] h-[42px] rounded-full"
               alt="User Profile"
             />
-          </Link>
+          </Link> : <img src={author.profileImage} className="w-[42px] h-[42px] rounded-full" alt="Author profile" />}
           <div>
-            <Link to={`/user/${blog.author.userId}`}>
-              <p className="text-2xl">{blog.author.personal_info.username}</p>
-            </Link>
+            {author.hasAuthor ? <Link to={`/user/${author.userId}`}>
+              <p className="text-2xl">{author.username}</p>
+            </Link> : <p className="text-2xl">{author.username}</p>}
             <p className="my-2 text-dark-grey line-clamp-2 max-w-[300px]">
-              {blog.author.personal_info.bio}
+              {author.bio}
             </p>
 
             {/* 关注按钮 */}
-            {isFollowedByUser !== 2 ? (
+            {author.hasAuthor && isFollowedByUser !== 2 ? (
               <button
                 className="text-red bg-grey px-3 py-1 hover:text-white hover:bg-red my-4"
                 onClick={() => handleFollow(isFollowedByUser)}

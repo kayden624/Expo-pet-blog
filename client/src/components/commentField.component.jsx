@@ -5,6 +5,7 @@ import newRequest from "../servers";
 import { BlogPageContext } from "../contexts/blogPageContext";
 import { Navigate } from "react-router-dom";
 import { CommentContext } from "./commentContext";
+import { getAuthorView } from "../utils/author";
 
 const CommentField = ({ rootData = null, to = null, setShow }) => {
   // 从用户认证上下文获取用户认证信息和相关数据
@@ -14,6 +15,7 @@ const CommentField = ({ rootData = null, to = null, setShow }) => {
 
   // 从博客页面上下文获取博客信息和设置博客信息的函数
   const { blog, setBlog } = useContext(BlogPageContext);
+  const author = getAuthorView(blog.author);
 
   // 评论输入框的文本内容状态
   const [textValue, setTextValue] = useState(null);
@@ -73,7 +75,7 @@ const CommentField = ({ rootData = null, to = null, setShow }) => {
                     user: _id,
                     blog: blog._id,
                     comment: comment_id,
-                    notification_for: blog.author._id,
+                    ...(author.authorId ? { notification_for: author.authorId } : {}),
                   },
                   {
                     headers: {
@@ -108,7 +110,7 @@ const CommentField = ({ rootData = null, to = null, setShow }) => {
                   blog: blog._id,
                   comment: comment_id,
                   replied_on_comment: rootData,
-                  notification_for: blog.author._id,
+                  ...(author.authorId ? { notification_for: author.authorId } : {}),
                 },
                 {
                   headers: {
