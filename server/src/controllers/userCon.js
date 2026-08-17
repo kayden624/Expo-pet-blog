@@ -14,6 +14,8 @@ const validatePassword = (password) => {
   return passwordRegex.test(password);
 };
 
+const validateUsername = (username) => /^[a-zA-Z0-9_]{3,20}$/.test(username);
+
 const formatedUserDataToSend = (data) => {
   const access_token = jwt.sign(
     { id: data._id },
@@ -30,17 +32,24 @@ const formatedUserDataToSend = (data) => {
 };
 
 export const signup = async (req, res) => {
-  let { email, password } = req.body; // Check if the email field exists
+  let { email, password, username } = req.body; // Check if the email field exists
 
   if (!email) {
     return res.status(403).json({ error: "Please provide an email address!" });
   }
 
-  const newUserId = nanoid();
-  const newUsername = email.split("@")[0] + nanoid();
-
   if (!validateEmail(email)) {
     return res.status(403).json({ error: "Invalid email address!" });
+  }
+
+  const requestedUsername = typeof username === "string" ? username.trim() : "";
+  const fallbackPrefix = email.split("@")[0].replace(/[^a-zA-Z0-9_]/g, "").slice(0, 14) || "user";
+  const newUsername = requestedUsername || `${fallbackPrefix}_${nanoid(4)}`;
+
+  if (!validateUsername(newUsername)) {
+    return res.status(403).json({
+      error: "Username must be 3-20 characters and use only letters, numbers, or underscores.",
+    });
   }
 
   console.log("email:", email);
@@ -49,6 +58,12 @@ export const signup = async (req, res) => {
       .status(500)
       .json({ error: "This email address is already taken." });
   }
+
+  if (await User.exists({ "personal_info.username": { $regex: `^${newUsername}$`, $options: "i" } })) {
+    return res.status(409).json({ error: "This username is already taken." });
+  }
+
+  const newUserId = nanoid();
 
   if (!validatePassword(password)) {
     return res.status(403).json({

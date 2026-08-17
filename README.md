@@ -1,53 +1,105 @@
-# Pet Blog Demo
+# Pet Blog
 
-This repository contains an Expo Router mobile/web client (`ashui-blog`), an Express/MongoDB API (`server`), and a legacy Vite client (`client`). The Expo web export is the recommended public demo.
+Pet Blog is a full-stack social blogging application for sharing articles, images, comments, and follows.
 
-## Environment setup
+## Live Demo
 
-Copy each relevant `.env.example` to `.env` locally and replace placeholders. Never commit `.env` files.
+Frontend: <https://expo-pet-blog.vercel.app>
 
-| Component | Required variables |
-| --- | --- |
-| `server` | `MONGODB_URI`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `PORT`, `CORS_ORIGIN`, `BASE_URL` |
-| `ashui-blog` | `EXPO_PUBLIC_API_URL` (the HTTPS API origin, without `/api`) |
-| `client` (legacy) | `VITE_BASE_URL` (the HTTPS API URL, including `/api`) |
+The REST API is hosted separately on Railway.
 
-## Local commands
+## Overview
 
-```bash
-cd server && npm install && npm run dev
-cd ashui-blog && npm install && EXPO_PUBLIC_API_URL=https://api.example.com npm run build:web
+- Authentication with JWT
+- User profiles and username customization
+- Create, edit, and delete blog posts
+- Banner and editor image uploads
+- Comments and replies
+- Follow users and favorite blogs
+- Notifications and search
+- Responsive web UI
+
+## Tech Stack
+
+Frontend: React, Vite, Tailwind CSS, Axios, React Router, EditorJS
+
+Backend: Node.js, Express, MongoDB, Mongoose, JWT, Multer
+
+Deployment: Vercel, Railway, MongoDB Atlas
+
+## Architecture
+
+```text
+Browser
+  -> Vercel frontend (client)
+  -> Railway REST API (server)
+  -> MongoDB Atlas
 ```
 
-The static Expo output is written to `ashui-blog/dist` and can be deployed to Vercel.
+The repository also contains `ashui-blog`, an Expo Router/React Native client retained for mobile and experimental work. The current public Vercel demo is the Vite client in `client`.
+
+## Key Engineering Work
+
+- JWT-protected API requests, including authenticated multipart uploads
+- Restricted production CORS configuration
+- Defensive handling of orphan author references
+- Loading, error, and empty states across profile and notification flows
+- SPA routing fallback for direct Vercel URLs
+- Production frontend and backend deployment configuration
+
+## Local Development
+
+Install dependencies in each application directory, then run the API and web client in separate terminals:
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+The Expo client can be run separately with `cd ashui-blog && npm install && npm run web`.
+
+## Environment Variables
+
+Create local files from the examples. Never commit `.env` files or replace these names with real secrets in documentation.
+
+`server/.env.example`:
+
+- `MONGODB_URI`
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN`
+- `PORT`
+- `CORS_ORIGIN`
+- `BASE_URL`
+
+`client/.env.example`:
+
+- `VITE_BASE_URL`
+
+`ashui-blog/.env.example`:
+
+- `EXPO_PUBLIC_API_URL`
 
 ## Deployment
 
-### Express API and MongoDB
+- Frontend: deploy `client` to Vercel with `npm run build` and output directory `dist`.
+- Backend: deploy `server` to Railway with `npm ci` and `npm start`.
+- Database: use MongoDB Atlas through `MONGODB_URI`.
+- Set the frontend URL in the backend `CORS_ORIGIN` value and the Railway API URL in `BASE_URL`.
 
-1. Create a MongoDB Atlas database user with access only to this demo database and obtain its TLS connection string.
-2. Deploy `server` as a Node service (Render, Railway, Fly.io, or equivalent) with root directory `server`.
-3. Set the server variables listed above. Set `CORS_ORIGIN` to the exact Vercel URL(s), comma-separated; set `BASE_URL` to the API's HTTPS origin.
-4. Build command: `npm ci`. Start command: `npm start`.
-5. Configure the host health check to call an API health endpoint once one is added; until then, verify a public read endpoint such as `/api/blog/getHotBlogs`.
+## Production Limitations
 
-### Expo Web on Vercel
+Image uploads currently use the Railway container filesystem. This is suitable for a portfolio/demo deployment, but uploaded files may not survive a redeploy or restart. Durable object storage such as S3, Cloudinary, or Supabase Storage would be the next production step.
 
-1. Import this repository in Vercel and set Root Directory to `ashui-blog`.
-2. Add `EXPO_PUBLIC_API_URL=https://<your-api-domain>` for Preview and Production.
-3. Build command: `npm run build:web`. Output directory: `dist`.
-4. `ashui-blog/vercel.json` provides the SPA fallback required for direct links to dynamic article and user routes.
-5. Deploy, then add the final Vercel domain to the API `CORS_ORIGIN` setting and redeploy the API.
+## Future Improvements
 
-`EXPO_PUBLIC_*` values are embedded into the browser bundle: they must never contain passwords, JWT secrets, or private connection strings.
-
-## Verification checklist
-
-- `cd ashui-blog && npm run typecheck`
-- `cd ashui-blog && EXPO_PUBLIC_API_URL=https://api.example.com npm run build:web`
-- Register and log in through the deployed web app.
-- Create, edit, and delete a blog as its author; verify another account cannot edit or delete it.
-- Create and delete a comment as its author; verify another account cannot delete it.
-- Follow a user, favourite a blog, and load each related list.
-- Upload a JPEG, PNG, or WebP under 5 MB and verify its HTTPS URL renders.
-- Confirm unauthenticated write requests return 401/403 and protected notification lists reject another user's ID.
+- Durable object storage for uploaded media
+- Automated tests and continuous integration
+- Accessibility and performance improvements, including code splitting
+- Further profile and username customization

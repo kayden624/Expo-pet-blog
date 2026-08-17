@@ -77,6 +77,13 @@ const UserAuthForm = ({ modalpannel, setModalPannel }) => {
             </button>
           </div>
           <form ref={authForm} className="mt-4 p-4">
+            {currentForm === "register" ? (
+              <InputBox
+                name="username"
+                type="text"
+                placeholder="Username (3–20 letters, numbers, or underscores)"
+              />
+            ) : null}
             <InputBox
               name="email"
               type="text"
