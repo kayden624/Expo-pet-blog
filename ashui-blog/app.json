@@ -14,7 +14,6 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "NSAllowsArbitraryLoads": true,
       "permissions": [
         "NSCameraUsageDescription",
         "NSPhotoLibraryUsageDescription"
@@ -22,7 +21,6 @@
       "supportsTablet": true
     },
     "android": {
-      "usesCleartextTraffic": true,
       "permissions": ["INTERNET"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",

@@ -82,13 +82,11 @@ export default function Comment({ blogId, total, blog_id }: CommentProps) {
         await addComment({
           blog_id: blog_id,
           comment: replyText,
-          from: userInfo?._id || "",
         });
       } else {
         await addComment({
           blog_id: blog_id,
           comment: replyText,
-          from: userInfo?._id || "",
           root: currentCommentId,
         });
       }

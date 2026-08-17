@@ -68,6 +68,13 @@ namespace Blog {
     blog: BlogItem;
   }
 
+  interface SearchResult {
+    _id: string;
+    blog: BlogItem;
+    summer: string;
+    title: string;
+  }
+
   interface BlogList {
     results: ListResult[];
     totalDocs: number;

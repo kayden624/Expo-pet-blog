@@ -1,15 +1,8 @@
 import { toast, Toaster } from "react-hot-toast";
 import InputBoxUser from "./inputUser.component";
-import { useContext, useRef } from "react";
-import { UserAuthContext } from "../hooks/userAuthContext";
+import { useRef } from "react";
 
 const AccountEditPannel = () => {
-  const {
-    userAuth,
-    userAuth: { access_token },
-    setUserAuth,
-  } = useContext(UserAuthContext);
-
   const accountForm = useRef();
 
   const handleClick = (e) => {

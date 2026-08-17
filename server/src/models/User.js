@@ -27,9 +27,7 @@ const userSchema = mongoose.Schema(
       },
       profile_img: {
         type: String,
-        default: () => {
-          return "http://192.168.0.120:3001/default_img.png";
-        },
+        default: () => `${process.env.BASE_URL}/default_img.png`,
       },
     },
     activity: {

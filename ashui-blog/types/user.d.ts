@@ -31,6 +31,18 @@ namespace User {
     __v: number;
   }
 
+  interface ListItem {
+    _id: string;
+    userId: string;
+    personal_info: Personal_info;
+  }
+
+  interface ListResponse {
+    results: ListItem[];
+    totalDocs: number;
+    pageIndex: string;
+  }
+
   interface Profile {
     status: string;
     user: User;

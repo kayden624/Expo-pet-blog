@@ -17,7 +17,8 @@ const validatePassword = (password) => {
 const formatedUserDataToSend = (data) => {
   const access_token = jwt.sign(
     { id: data._id },
-    process.env.SECRET_ACCESS_KEY
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
   );
   return {
     access_token,
@@ -226,8 +227,7 @@ export const updatePassword = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-  let { user_id } = req.query;
-  await User.findByIdAndDelete({ _id: user_id })
+  await User.findByIdAndDelete({ _id: req.user })
     .then(() => {
       return res.status(200).json({ status: "success" });
     })

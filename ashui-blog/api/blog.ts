@@ -21,7 +21,7 @@ export const getBlogFollowList =
   (page = 1, limit = 10) =>
     api
       .get<Blog.BlogList>(
-        `blog/userFollowedBlogList?page=${page}&limit=${limit}&userId=${userId}`
+        `blog/blogList/followed?page=${page}&limit=${limit}&userId=${userId}`
       )
       .json();
 
@@ -36,8 +36,8 @@ export const followBlog = (blog_id: string) =>
 export const addComment = (data: {
   blog_id: string;
   comment: string;
-  from: string;
   root?: string;
+  to?: string;
 }) => api.post(`comment/create`, { json: data }).json();
 
 //删除评论
@@ -49,7 +49,7 @@ export const searchBlog =
   (keyword: string, user_id = "") =>
   (page = 1, limit = 10) =>
     api
-      .get<Blog.BlogList>(
+      .get<{ results: Blog.SearchResult[]; totalDocs: number; pageIndex: string }>(
         `search/blog?keyValue=${keyword}&page=${page}&limit=${limit}&user_id=${user_id}`
       )
       .json();

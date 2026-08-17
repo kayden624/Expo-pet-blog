@@ -26,7 +26,6 @@ export const doLogin = async (email: string, password: string) => {
       await setItem(USER_KEY, {
         ...res,
         email,
-        password,
         loginTime: Date.now(),
       });
     }

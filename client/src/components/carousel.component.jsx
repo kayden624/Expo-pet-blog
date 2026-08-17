@@ -4,15 +4,13 @@ import { homeBanner } from "../utils/data";
 const Carousel = ({ interval = 3000 }) => {
   const [bannerIndex, setBannerIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  let images = homeBanner;
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBannerIndex((prevIndex) => (prevIndex + 1) % homeBanner.length);
+    }, interval);
 
-  //   useEffect(() => {
-  //     const timer = setInterval(() => {
-  //       setBannerIndex((prevIndex) => (prevIndex + 1) % images.length);
-  //     }, interval);
-
-  //     return () => clearInterval(timer);
-  //   }, [images.length, interval]);
+    return () => clearInterval(timer);
+  }, [interval]);
 
   const handlePre = () => {
     if (bannerIndex == 0) {
@@ -49,7 +47,7 @@ const Carousel = ({ interval = 3000 }) => {
         </>
       )}
 
-      <img src={homeBanner[bannerIndex].imgUrl} />
+      <img src={homeBanner[bannerIndex].imgUrl} alt="Featured pet blog" />
 
       <div></div>
     </div>

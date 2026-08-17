@@ -18,7 +18,7 @@ export default function FollowedUserList({
   return (
     <View className="flex-1 ">
       {/*@ts-ignore */}
-      <ScrollView
+      <ScrollView<User.ListItem>
         loadDataFn={loadDataFn}
         enableRefresh
         keyExtractor={(item) => item._id}

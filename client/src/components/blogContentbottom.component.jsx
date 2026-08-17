@@ -3,13 +3,11 @@ import Loader from "./loader.component";
 import { UserAuthContext } from "./../hooks/userAuthContext";
 import { Toaster, toast } from "react-hot-toast";
 import newRequest from "../servers";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { BlogPageContext } from "../pages/blog.page";
 
 const BlogContentBottomComponent = () => {
   // 获取URL参数中的博客ID
-  const { blog_id } = useParams();
-
   const {
     userAuth: { access_token, userId, _id },
   } = useContext(UserAuthContext);
@@ -19,7 +17,6 @@ const BlogContentBottomComponent = () => {
     blog,
     blog: {
       activity,
-      activity: {},
     },
     setBlog,
     isFollowedByUser,
@@ -53,7 +50,7 @@ const BlogContentBottomComponent = () => {
             },
           }
         )
-        .then(({ data }) => {
+        .then(() => {
           // 更新通知
           if (flag) {
             // 删除通知
