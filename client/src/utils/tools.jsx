@@ -24,12 +24,14 @@ const uploadImageByUrl = (e) => {
 
 const uploadImageByFile = (e) => {
   return uploadImage(e).then((url) => {
-    if (url) {
-      return {
-        success: 1,
-        file: { url },
-      };
+    if (!url) {
+      throw new Error("Upload response did not include a valid file path.");
     }
+
+    return {
+      success: 1,
+      file: { url },
+    };
   });
 };
 

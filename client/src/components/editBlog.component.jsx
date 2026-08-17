@@ -134,14 +134,16 @@ const EditBlogComponent = () => {
     const img = e.target.files[0];
     if (img) {
       const loadingToast = toast.loading("Uploading...");
-      uploadImage(img).then((url) => {
-        if (url) {
-          toast.dismiss(loadingToast);
-          toast.success("Uploaded!");
-
+      uploadImage(img)
+        .then((url) => {
           setBlog({ ...blog, banner: url });
-        }
-      });
+          toast.success("Uploaded!");
+        })
+        .catch((error) => {
+          console.error("Banner upload failed:", error);
+          toast.error("Upload failed. Please try again.");
+        })
+        .finally(() => toast.dismiss(loadingToast));
     }
   };
 

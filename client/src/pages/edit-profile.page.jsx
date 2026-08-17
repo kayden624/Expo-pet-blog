@@ -56,21 +56,23 @@ const EditProfile = () => {
     let img = e.target.files[0];
     // console.log(img);
 
-    profileImgRef.current.src = URL.createObjectURL(img);
-
     if (img) {
+      profileImgRef.current.src = URL.createObjectURL(img);
       let loadingToast = toast.loading("Uploading...");
 
-      uploadImage(img).then((url) => {
-        console.log(url);
-        if (url) {
+      uploadImage(img)
+        .then((url) => {
           setUpdatedImg(url);
-
-          toast.dismiss(loadingToast);
-          e.target.removeAttribute("disabled");
           toast.success("Uploaded!");
-        }
-      });
+        })
+        .catch((error) => {
+          console.error("Profile image upload failed:", error);
+          toast.error("Upload failed. Please try again.");
+        })
+        .finally(() => {
+          e.target.removeAttribute("disabled");
+          toast.dismiss(loadingToast);
+        });
     }
   };
 
@@ -123,7 +125,12 @@ const EditProfile = () => {
         toast.success("Submit successfully");
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Profile update failed:", err);
+        toast.error("Profile update failed. Please try again.");
+      })
+      .finally(() => {
+        e.target.removeAttribute("disabled");
+        toast.dismiss(loadingToast);
       });
   };
 
